@@ -8,38 +8,39 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
+using UnityEngine.SceneManagement; //to call SceneManager function which will allow us to navigate between scenes. 
 
 public class Player : MonoBehaviour
 {
 
-    private float moveForce=10f;
+    private float moveForce=10f; //variable that will help in player movement
     
     [SerializeField]
-    private float jumpForce=11f;
-    private float movementX;
+    private float jumpForce=11f; //a player needs a force to make it jump and this variable will be used in that. 
+    private float movementX;  //to calculate change in x coordinate of player
       [SerializeField]
-    private Rigidbody2D myBody;
+    private Rigidbody2D myBody; //adding 'rigidbody 2D' component to the player which will make gravity act on it, allow it to experience force, etc. 
     [SerializeField]
-    private SpriteRenderer sr;
+    private SpriteRenderer sr; //Sprite renderer will add the player sprite to our scene. 
     [SerializeField]
-    private Animator anim;
-    private string RUN_ANIMATION = "Run final";
+    private Animator anim; // to animate the player
+    private string RUN_ANIMATION = "Run final"; //to access 'run animation'
     
 
 
-    private bool isGrounded=true;
-    private string GROUND_TAG="Ground";
+    private bool isGrounded=true; //declaring a variable which will be used to make player jump only when it is on ground. 
+    //declaring tags:
+    private string GROUND_TAG="Ground"; 
     private string ENEMY_TAG="Enemy";
     private string FOOD_TAG="Food";
 
 
 
 
-
-    [SerializeField] private float _maxEnergy=10f;
-    private float _thresholdEnergy=9f;
-    private float _currentEnergy;
+    //declaring variables which will be used to control energy bar:
+    [SerializeField] private float _maxEnergy=10f; //setting the max energy to 10.
+    private float _thresholdEnergy=9f; //setting the threshold energy to 9.
+    private float _currentEnergy; //player's energy status at a given time. 
     [SerializeField] private EnergyBar _energybar;
 
 
@@ -53,15 +54,15 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-       _currentEnergy=8f;
-       _energybar.UpdateEnergyBar(_maxEnergy,_currentEnergy); 
+       _currentEnergy=8f; //game will start with player having initial energy=8.
+       _energybar.UpdateEnergyBar(_maxEnergy,_currentEnergy); //calling 'UpdateEnergyBar' function to update the player's energy bar according to current energy
     }
 
-    void consumeEnergy(){
+    void consumeEnergy(){    //function that will determine the consequence on player's speed depending on it's energy status
         
      
         if (_currentEnergy>_thresholdEnergy){
-             moveForce=5f;
+             moveForce=5f; //if energy is greater than the threshold energy, the player's speed decreases to 5
              Debug.Log("Energy greater than threshold energy! Speed reduced to 5.");
              _energybar.UpdateEnergyBar(_maxEnergy,_currentEnergy);
         }
@@ -80,13 +81,14 @@ public class Player : MonoBehaviour
            
 
         else if (_currentEnergy<=0f){
-            Destroy(gameObject);
-            SceneManager.LoadScene("GameOver");
+            Destroy(gameObject); //gameObject, ie, the player is destroyed when energy bar reaches 0 and the game concludes. 
+            SceneManager.LoadScene("GameOver"); //GameOver scene is called
         }
             
    
         }
-    // Update is called once per frame
+    // Update is called once per frame 
+    // All the functions inside the Update will be called once per frame. 
     void Update()
     {
         PlayerMoveKeyboard();
@@ -96,26 +98,24 @@ public class Player : MonoBehaviour
     }
 
    
-
+    //function to determine player's movement:
     void PlayerMoveKeyboard(){
 
-     movementX=Input.GetAxisRaw("Horizontal");
-     transform.position += new Vector3(movementX,0f,0f)*moveForce*Time.deltaTime;
-      
-      
-       
+     movementX=Input.GetAxisRaw("Horizontal"); //change in x coordinate, ie, movementX can take values between -1, 0 & 1 when the player inputs horizontal commands (D, A, Right arrow or Left arrow) 
+     transform.position += new Vector3(movementX,0f,0f)*moveForce*Time.deltaTime; //determining the position of player by adding the (change in x) *(moveforce) *(time.delta time), where time refers to amount of seconds for which key is pressed and delta time refers to the time difference between each frame change. 
+          
     }
 
-
+    //function to control player's animation:
     void AnimatePlayer(){
         if(movementX>0){
-            anim.SetBool(RUN_ANIMATION, true);
+            anim.SetBool(RUN_ANIMATION, true);  //function that will enable the transition between idle and run state
             sr.flipX=false;
-             _currentEnergy -= 0.0005f;
+             _currentEnergy -= 0.0005f;  //energy decrement while running
         }
         else if(movementX<0){
             anim.SetBool(RUN_ANIMATION, true);
-            sr.flipX=true;
+            sr.flipX=true; //this function flips the player sprite so that when it is running in -x direction, the player also turns in the -x direction
              _currentEnergy -= 0.0005f;
         }
 
@@ -126,14 +126,15 @@ public class Player : MonoBehaviour
 
     
     }
-
+    
+    //functioj to determine player's jump:
     void PlayerJump(){
-        if(Input.GetKeyDown(KeyCode.Space) && isGrounded){
-            isGrounded=false;
-            myBody.AddForce(new Vector2(0f, jumpForce), ForceMode2D.Impulse);
+        if(Input.GetKeyDown(KeyCode.Space) && isGrounded){   //it is called when user inputs space key and when the player is grounded. 
+            isGrounded=false;  //switching the variable to false so that only one jump is executed at a time. 
+            myBody.AddForce(new Vector2(0f, jumpForce), ForceMode2D.Impulse);  //adding force to player to make it reach at a height
           
             
-        _currentEnergy -= 0.025f;
+        _currentEnergy -= 0.025f; //energy decrement while jumping
            
         }
         
@@ -153,7 +154,7 @@ public class Player : MonoBehaviour
         if (collision.gameObject.CompareTag(FOOD_TAG)){
             _currentEnergy +=0.5f;
             Destroy(collision.gameObject);
-            Scoring.instance.AddPoint();
+           
         }
 
 
