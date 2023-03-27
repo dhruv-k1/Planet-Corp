@@ -13,7 +13,6 @@ using UnityEngine.SceneManagement;
 public class Player : MonoBehaviour
 {
 
-    //[SerializeField]
     private float moveForce=10f;
     
     [SerializeField]
