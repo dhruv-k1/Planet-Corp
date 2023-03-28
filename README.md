@@ -141,18 +141,20 @@ public class Player : MonoBehaviour
         
     }
 
+    //creating a function to determine player collisions
+    //every object has a box collider component(ie, a component that sets a boundary around object to detect collsiions) and given their respective tag for example enemy has enemy tag, food items have good tag, etc. 
     private void OnCollisionEnter2D(Collision2D collision){
-        if (collision.gameObject.CompareTag(GROUND_TAG)){
+        if (collision.gameObject.CompareTag(GROUND_TAG)){  //condition to check whether the player has collided with ground object
             isGrounded = true;
         }
 
-        if (collision.gameObject.CompareTag(ENEMY_TAG)){
+        if (collision.gameObject.CompareTag(ENEMY_TAG)){ //condition to check whether the player has collided with ground object
             Destroy(gameObject);
             SceneManager.LoadScene("GameOver");
         }
 
-        if (collision.gameObject.CompareTag(FOOD_TAG)){
-            _currentEnergy +=0.5f;
+        if (collision.gameObject.CompareTag(FOOD_TAG)){  //condition to check whether the player has collided with ground object
+            _currentEnergy +=0.5f; //energy increment on collidong with food item
             Destroy(collision.gameObject);
            
         }
